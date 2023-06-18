@@ -13,8 +13,8 @@ import {
   AddButton,
 } from './ContactForm.styled';
 import { useDispatch, useSelector } from 'react-redux';
-import { getContacts } from 'redux/selectors';
-import { addContact } from 'redux/contactsSlice';
+import { selectContacts } from 'redux/selectors';
+import { addContactThunk } from 'redux/thunks';
 
 const validationSchema = yup.object({
   name: yup
@@ -34,7 +34,7 @@ const validationSchema = yup.object({
 });
 
 export const ContactForm = () => {
-  const contacts = useSelector(getContacts);
+  const contacts = useSelector(selectContacts);
   const dispatch = useDispatch();
 
   const formik = useFormik({
@@ -55,7 +55,7 @@ export const ContactForm = () => {
       return;
     }
     Notify.success(`Contact ${name} added to contacts`);
-    dispatch(addContact(name, number));
+    dispatch(addContactThunk(name, number));
   };
 
   const nameInputId = uniqid();

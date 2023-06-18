@@ -1,7 +1,9 @@
+import { useEffect } from 'react';
 import { Contact } from './Contact/Contact';
 import { ContactsList } from './ContactList.styled';
-import { useSelector } from 'react-redux';
-import { getContacts, getFilter } from 'redux/selectors';
+import { useDispatch, useSelector } from 'react-redux';
+import { selectContacts, selectFilter } from 'redux/selectors';
+import { getContactsThunk } from 'redux/thunks';
 
 const filterContacts = (contacts, filter) => {
   const normalizedFilter = filter.toLowerCase();
@@ -12,9 +14,14 @@ const filterContacts = (contacts, filter) => {
 };
 
 export const ContactList = () => {
-  const contacts = useSelector(getContacts);
-  const filter = useSelector(getFilter);
+  const contacts = useSelector(selectContacts);
+  const filter = useSelector(selectFilter);
   const filteredContacts = filterContacts(contacts, filter);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getContactsThunk());
+  }, [dispatch]);
 
   return (
     <div>

@@ -7,13 +7,13 @@ import {
 } from './Filter.styled';
 import sprite from '../../img/sprite.svg';
 import { useDispatch, useSelector } from 'react-redux';
-import { getFilter } from 'redux/selectors';
+import { selectFilter } from 'redux/selectors';
 import { updateFilter } from 'redux/filterSlice';
 
 const searchIcon = `${sprite}#icon-search`;
 
 export const Filter = ({ onChange }) => {
-  const filter = useSelector(getFilter);
+  const filter = useSelector(selectFilter);
   const dispatch = useDispatch();
 
   const handleFilter = ({ currentTarget: { value } }) => {
