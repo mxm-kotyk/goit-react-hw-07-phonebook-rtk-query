@@ -1,14 +1,15 @@
-export const addContactAction = contact => ({
-  type: 'contacts/addContact',
-  payload: contact,
-});
+import { createAction } from '@reduxjs/toolkit';
+import uniqid from 'uniqid';
 
-export const deleteConatactAction = id => ({
-  type: 'contacts/deleteContact',
-  payload: id,
-});
+export const addContactAction = createAction(
+  'contacts/addContact',
+  (name, number) => {
+    return {
+      payload: { id: uniqid(), name, number },
+    };
+  }
+);
 
-export const updateFilterAction = text => ({
-  type: 'filter/updateFilter',
-  payload: text,
-});
+export const deleteConatactAction = createAction('contacts/deleteContact');
+
+export const updateFilterAction = createAction('filter/updateFilter');

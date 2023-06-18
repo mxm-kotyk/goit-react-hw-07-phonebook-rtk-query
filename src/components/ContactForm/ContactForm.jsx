@@ -55,7 +55,7 @@ export const ContactForm = () => {
       return;
     }
     Notify.success(`Contact ${name} added to contacts`);
-    dispatch(addContactAction({ id: uniqid(), name, number }));
+    dispatch(addContactAction(name, number));
   };
 
   const nameInputId = uniqid();
