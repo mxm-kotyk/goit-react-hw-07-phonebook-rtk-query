@@ -14,7 +14,7 @@ import {
 } from './ContactForm.styled';
 import { useDispatch, useSelector } from 'react-redux';
 import { getContacts } from 'redux/selectors';
-import { addContactAction } from 'redux/actions';
+import { addContact } from 'redux/contactsSlice';
 
 const validationSchema = yup.object({
   name: yup
@@ -55,7 +55,7 @@ export const ContactForm = () => {
       return;
     }
     Notify.success(`Contact ${name} added to contacts`);
-    dispatch(addContactAction(name, number));
+    dispatch(addContact(name, number));
   };
 
   const nameInputId = uniqid();

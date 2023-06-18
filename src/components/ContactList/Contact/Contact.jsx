@@ -10,7 +10,7 @@ import {
 } from './Contact.styled';
 import sprite from '../../../img/sprite.svg';
 import { useDispatch } from 'react-redux';
-import { deleteConatactAction } from 'redux/actions';
+import { deleteContact } from 'redux/contactsSlice';
 
 const callIcon = `${sprite}#icon-phone`;
 const deleteIcon = `${sprite}#icon-delete`;
@@ -20,7 +20,7 @@ export const Contact = ({ id, name, number }) => {
   const normalizedNumberLink = `tel:${number.replace(/[^\d+]/g, '')}`;
 
   const handleDelete = () => {
-    dispatch(deleteConatactAction(id));
+    dispatch(deleteContact(id));
   };
 
   return (

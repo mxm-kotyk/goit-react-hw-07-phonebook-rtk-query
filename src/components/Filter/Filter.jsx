@@ -8,7 +8,7 @@ import {
 import sprite from '../../img/sprite.svg';
 import { useDispatch, useSelector } from 'react-redux';
 import { getFilter } from 'redux/selectors';
-import { updateFilterAction } from 'redux/actions';
+import { updateFilter } from 'redux/filterSlice';
 
 const searchIcon = `${sprite}#icon-search`;
 
@@ -17,7 +17,7 @@ export const Filter = ({ onChange }) => {
   const dispatch = useDispatch();
 
   const handleFilter = ({ currentTarget: { value } }) => {
-    dispatch(updateFilterAction(value));
+    dispatch(updateFilter(value));
   };
 
   return (
