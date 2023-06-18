@@ -34,7 +34,7 @@ const validationSchema = yup.object({
 });
 
 export const ContactForm = () => {
-  const { items } = useSelector(selectContacts);
+  const contacts = useSelector(selectContacts);
   const dispatch = useDispatch();
 
   const formik = useFormik({
@@ -45,7 +45,7 @@ export const ContactForm = () => {
 
   const handleSubmit = (name, number) => {
     formik.resetForm();
-    if (items.some(contact => contact.name.includes(name))) {
+    if (contacts.some(contact => contact.name.includes(name))) {
       Report.warning(`${name} is already in contacts`, '', 'OK', {
         backOverlayClickToClose: true,
         backOverlayColor: 'rgba(199,87,21,0.2)',

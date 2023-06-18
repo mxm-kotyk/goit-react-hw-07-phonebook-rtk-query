@@ -2,7 +2,12 @@ import { useEffect } from 'react';
 import { Contact } from './Contact/Contact';
 import { ContactsList } from './ContactList.styled';
 import { useDispatch, useSelector } from 'react-redux';
-import { selectContacts, selectFilter } from 'redux/selectors';
+import {
+  selectContacts,
+  selectError,
+  selectFilter,
+  selectIsLoading,
+} from 'redux/selectors';
 import { fetchContacts } from 'redux/thunks';
 
 const filterContacts = (contacts, filter) => {
@@ -14,9 +19,11 @@ const filterContacts = (contacts, filter) => {
 };
 
 export const ContactList = () => {
-  const { items, isLoading, error } = useSelector(selectContacts);
+  const contacts = useSelector(selectContacts);
+  const isLoading = useSelector(selectIsLoading);
+  const error = useSelector(selectError);
   const filter = useSelector(selectFilter);
-  const filteredContacts = filterContacts(items, filter);
+  const filteredContacts = filterContacts(contacts, filter);
   const dispatch = useDispatch();
 
   useEffect(() => {
