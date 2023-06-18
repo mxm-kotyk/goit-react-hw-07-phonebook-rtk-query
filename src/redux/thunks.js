@@ -1,45 +1,42 @@
-import { addContact, deleteContact, fetchContacts } from 'services/mockAPI';
 import {
-  addContactFulfilled,
-  addContactPending,
-  addContactsRejected,
-  deleteContactFulfilled,
-  deleteContactPending,
-  deleteContactsRejected,
-  fetchAllContactsFulfilled,
-  fetchAllContactsPending,
-  fetchAllContactsRejected,
-} from './contactsSlice';
+  addContactRequest,
+  deleteContactRequest,
+  fetchContactsRequest,
+} from 'services/mockAPI';
+import { createAsyncThunk } from '@reduxjs/toolkit';
 
-export const getContactsThunk = () => async dispatch => {
-  dispatch(fetchAllContactsPending());
-
-  try {
-    const contacts = await fetchContacts();
-    dispatch(fetchAllContactsFulfilled(contacts));
-  } catch (error) {
-    dispatch(fetchAllContactsRejected(error.message));
+export const fetchContacts = createAsyncThunk(
+  'contacts/fetchAll',
+  async (_, thunkAPI) => {
+    try {
+      const contacts = await fetchContactsRequest();
+      return contacts;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
   }
-};
+);
 
-export const addContactThunk = (name, number) => async dispatch => {
-  dispatch(addContactPending());
-
-  try {
-    const contact = await addContact(name, number);
-    dispatch(addContactFulfilled(contact));
-  } catch (error) {
-    dispatch(addContactsRejected(error.message));
+export const addContact = createAsyncThunk(
+  'contacts/addContact',
+  async (contactData, thunkAPI) => {
+    try {
+      const contact = await addContactRequest(contactData);
+      return contact;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
   }
-};
+);
 
-export const deleteContactThunk = id => async dispatch => {
-  dispatch(deleteContactPending());
-
-  try {
-    const contact = await deleteContact(id);
-    dispatch(deleteContactFulfilled(contact));
-  } catch (error) {
-    dispatch(deleteContactsRejected(error.message));
+export const deleteContact = createAsyncThunk(
+  'contacts/deleteContact',
+  async (id, thunkAPI) => {
+    try {
+      const contact = await deleteContactRequest(id);
+      return contact;
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error.message);
+    }
   }
-};
+);

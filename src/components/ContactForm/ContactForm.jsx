@@ -14,7 +14,7 @@ import {
 } from './ContactForm.styled';
 import { useDispatch, useSelector } from 'react-redux';
 import { selectContacts } from 'redux/selectors';
-import { addContactThunk } from 'redux/thunks';
+import { addContact } from 'redux/thunks';
 
 const validationSchema = yup.object({
   name: yup
@@ -34,7 +34,7 @@ const validationSchema = yup.object({
 });
 
 export const ContactForm = () => {
-  const contacts = useSelector(selectContacts);
+  const { items } = useSelector(selectContacts);
   const dispatch = useDispatch();
 
   const formik = useFormik({
@@ -45,7 +45,7 @@ export const ContactForm = () => {
 
   const handleSubmit = (name, number) => {
     formik.resetForm();
-    if (contacts.some(contact => contact.name.includes(name))) {
+    if (items.some(contact => contact.name.includes(name))) {
       Report.warning(`${name} is already in contacts`, '', 'OK', {
         backOverlayClickToClose: true,
         backOverlayColor: 'rgba(199,87,21,0.2)',
@@ -55,7 +55,8 @@ export const ContactForm = () => {
       return;
     }
     Notify.success(`Contact ${name} added to contacts`);
-    dispatch(addContactThunk(name, number));
+    const contactData = { name, number };
+    dispatch(addContact(contactData));
   };
 
   const nameInputId = uniqid();
