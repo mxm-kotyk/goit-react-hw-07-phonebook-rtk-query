@@ -9,18 +9,27 @@ import {
   DeleteButton,
 } from './Contact.styled';
 import sprite from '../../../img/sprite.svg';
-import { useDispatch } from 'react-redux';
-import { deleteContact } from 'redux/thunks';
+import { useDeleteContactMutation } from 'redux/contactsApi';
+import { Ring } from '@uiball/loaders';
+import { errorToast, successDeleteToast } from 'helpers/toasts';
 
 const callIcon = `${sprite}#icon-phone`;
 const deleteIcon = `${sprite}#icon-delete`;
 
 export const Contact = ({ id, name, number }) => {
-  const dispatch = useDispatch();
   const normalizedNumberLink = `tel:${number.replace(/[^\d+]/g, '')}`;
+  const [deleteContact, { error, isLoading }] = useDeleteContactMutation();
 
-  const handleDelete = () => {
-    dispatch(deleteContact(id));
+  const handleDelete = async id => {
+    await deleteContact(id);
+
+    if (error) {
+      errorToast(error);
+    }
+
+    if (!error) {
+      successDeleteToast(name);
+    }
   };
 
   return (
@@ -34,9 +43,17 @@ export const Contact = ({ id, name, number }) => {
           <use href={callIcon}></use>
         </ContactIcon>
       </CallButton>
-      <DeleteButton type="button" onClick={handleDelete} title="Delete Contact">
+      <DeleteButton
+        type="button"
+        onClick={() => handleDelete(id)}
+        title="Delete Contact"
+      >
         <ContactIcon width="24" height="24">
-          <use href={deleteIcon}></use>
+          {isLoading ? (
+            <Ring size={24} lineWeight={5} speed={2} color="white" />
+          ) : (
+            <use href={deleteIcon}></use>
+          )}
         </ContactIcon>
       </DeleteButton>
     </ContactItem>

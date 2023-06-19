@@ -1,14 +1,10 @@
-import { useEffect } from 'react';
 import { Contact } from './Contact/Contact';
 import { ContactsList } from './ContactList.styled';
-import { useDispatch, useSelector } from 'react-redux';
-import {
-  selectContacts,
-  selectError,
-  selectFilter,
-  selectIsLoading,
-} from 'redux/selectors';
-import { fetchContacts } from 'redux/thunks';
+import { useSelector } from 'react-redux';
+import { selectFilter } from 'redux/selectors';
+import { useGetAllContactsQuery } from 'redux/contactsApi';
+import { errorToast } from 'helpers/toasts';
+import { DotWave } from '@uiball/loaders';
 
 const filterContacts = (contacts, filter) => {
   const normalizedFilter = filter.toLowerCase();
@@ -19,25 +15,28 @@ const filterContacts = (contacts, filter) => {
 };
 
 export const ContactList = () => {
-  const contacts = useSelector(selectContacts);
-  const isLoading = useSelector(selectIsLoading);
-  const error = useSelector(selectError);
-  const filter = useSelector(selectFilter);
-  const filteredContacts = filterContacts(contacts, filter);
-  const dispatch = useDispatch();
+  const { data: contacts, isLoading, error } = useGetAllContactsQuery();
 
-  useEffect(() => {
-    dispatch(fetchContacts());
-  }, [dispatch]);
+  const filter = useSelector(selectFilter);
+  const filteredContacts =
+    !isLoading && !error && filterContacts(contacts, filter);
+
+  const loadingIndicator = isLoading && (
+    <DotWave size={100} speed={1} color="#204154" />
+  );
+
+  const showError = error && errorToast(error);
 
   return (
     <div>
-      {isLoading && <h2>Loading...</h2>}
-      {error && <h2>{error}</h2>}
       <ContactsList>
-        {filteredContacts.map(({ id, name, number }) => {
-          return <Contact key={id} id={id} name={name} number={number} />;
-        })}
+        {showError}
+        {loadingIndicator}
+        {!isLoading &&
+          !error &&
+          filteredContacts.map(({ id, name, number }) => {
+            return <Contact key={id} id={id} name={name} number={number} />;
+          })}
       </ContactsList>
     </div>
   );

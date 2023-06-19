@@ -2,8 +2,7 @@ import { useFormik } from 'formik';
 import * as yup from 'yup';
 import PropTypes from 'prop-types';
 import uniqid from 'uniqid';
-import { Report } from 'notiflix/build/notiflix-report-aio';
-import { Notify } from 'notiflix/build/notiflix-notify-aio';
+import { Ring } from '@uiball/loaders';
 import {
   StyledForm,
   StyledField,
@@ -12,9 +11,11 @@ import {
   ErrorText,
   AddButton,
 } from './ContactForm.styled';
-import { useDispatch, useSelector } from 'react-redux';
-import { selectContacts } from 'redux/selectors';
-import { addContact } from 'redux/thunks';
+import {
+  useAddContactMutation,
+  useGetAllContactsQuery,
+} from 'redux/contactsApi';
+import { errorToast, successAddToast, warningToast } from 'helpers/toasts';
 
 const validationSchema = yup.object({
   name: yup
@@ -34,8 +35,8 @@ const validationSchema = yup.object({
 });
 
 export const ContactForm = () => {
-  const contacts = useSelector(selectContacts);
-  const dispatch = useDispatch();
+  const [addContact, { error, isLoading }] = useAddContactMutation();
+  const { data: contacts } = useGetAllContactsQuery();
 
   const formik = useFormik({
     initialValues: { name: '', number: '' },
@@ -43,20 +44,24 @@ export const ContactForm = () => {
     validationSchema,
   });
 
-  const handleSubmit = (name, number) => {
+  const handleSubmit = async (name, number) => {
     formik.resetForm();
+
     if (contacts.some(contact => contact.name.includes(name))) {
-      Report.warning(`${name} is already in contacts`, '', 'OK', {
-        backOverlayClickToClose: true,
-        backOverlayColor: 'rgba(199,87,21,0.2)',
-        buttonBackground: '#C75715',
-        svgColor: '#C75715',
-      });
+      warningToast(name);
       return;
     }
-    Notify.success(`Contact ${name} added to contacts`);
+
     const contactData = { name, number };
-    dispatch(addContact(contactData));
+    await addContact(contactData);
+
+    if (error) {
+      errorToast(error);
+    }
+
+    if (!error) {
+      successAddToast(name);
+    }
   };
 
   const nameInputId = uniqid();
@@ -98,7 +103,13 @@ export const ContactForm = () => {
             <ErrorText>{formik.errors.number}</ErrorText>
           )}
         </FieldWrapper>
-        <AddButton type="submit">Add contact</AddButton>
+        <AddButton type="submit" disabled={isLoading}>
+          {isLoading ? (
+            <Ring size={40} lineWeight={5} speed={2} color="white" />
+          ) : (
+            'Add contact'
+          )}
+        </AddButton>
       </StyledForm>
     </div>
   );
