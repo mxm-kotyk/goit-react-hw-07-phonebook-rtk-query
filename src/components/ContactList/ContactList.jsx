@@ -18,8 +18,7 @@ export const ContactList = () => {
   const { data: contacts, isLoading, error } = useGetAllContactsQuery();
 
   const filter = useSelector(selectFilter);
-  const filteredContacts =
-    !isLoading && !error && filterContacts(contacts, filter);
+  const filteredContacts = contacts && filterContacts(contacts, filter);
 
   const loadingIndicator = isLoading && (
     <DotWave size={100} speed={1} color="#204154" />
@@ -32,8 +31,7 @@ export const ContactList = () => {
       <ContactsList>
         {showError}
         {loadingIndicator}
-        {!isLoading &&
-          !error &&
+        {contacts &&
           filteredContacts.map(({ id, name, number }) => {
             return <Contact key={id} id={id} name={name} number={number} />;
           })}
